@@ -55,7 +55,7 @@ spec:
           image: ccr.ccs.tencentyun.com/ernstliang/jwt-demo:v0.0.4
           ports:
             - containerPort: 8080
-          volumeMount:
+          volumeMounts:
             - mountPath: /data/secret
               name: secret
               readOnly: true
