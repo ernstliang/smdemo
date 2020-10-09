@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jwt-demo-deployment
+  namespace: demo
+  labels:
+    app: jwt-demo
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: jwt-demo
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jwt-demo
+        version: v1
+    spec:
+      containers:
+      - name: jwt
+        image: ccr.ccs.tencentyun.com/ernstliang/jwt-demo:v0.0.4
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: hub-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jwt-demo
+  namespace: demo
+  labels:
+    app: jwt-demo
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: jwt-demo
