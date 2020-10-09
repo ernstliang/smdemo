@@ -2,6 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-jwt-demo
+  namespace: demo
   annotations:
     kubernetes.io/ingress.class: kong
 spec:
