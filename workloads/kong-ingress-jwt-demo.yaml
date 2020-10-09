@@ -10,7 +10,11 @@ spec:
   - host: iam.jcliang.cn
     http:
       paths:
-      - path: /
+      - path: /login
+        backend:
+          serviceName: jwt-demo
+          servicePort: 8080
+      - path: /validate
         backend:
           serviceName: jwt-demo
           servicePort: 8080
