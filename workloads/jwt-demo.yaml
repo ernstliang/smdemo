@@ -1,3 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    alauda.io/description: ''
+  name: jwt-secret
+  namespace: demo
+data:
+  rsa_private_key.pem: |-
+    -----BEGIN RSA PRIVATE KEY-----
+    MIICXQIBAAKBgQCnXYubhqfjt/I1p34g62+gpjNfFsPW3yP1ClzbC2xeZQ3W6/56
+    jvOo5CcS6t+P/hondOGUKq4hJDBkzC2M8VtuTXN8iPXG76my5lMWFwPXU3x5HOZr
+    rsP0YogYuaI48wG0nwlRB5T44T39xrWJ3cSPwaoFIeqxczdoP4Wm3e+PUQIDAQAB
+    AoGBAIimwoR8D7zIxkS0uzEZyoz65tru9XwNuYgrq+FVlGgGTqR7D871xVDS6Gxz
+    xZIGQUiSEFUv+/knWTQT2eVIdANrcx/txnZH9hQuSBu3u/szh74i5j3UJq3dYU73
+    nUwEjoqS/H9X4RK6cPPhnrFk9WfB6H//dCR0iYvaY4/+TLmhAkEA2HJ47+LfWQz2
+    58m/jqBZvMfbegU5wKUcjcs5k6fSJhQ5EeAHzdIG7tGbcjnC8YhtMDyow+Lqy0qf
+    iefycDP77QJBAMXy/9ysC4tDM/qmfh4a98mwxVno85JWwCii+mniFKhE0RM/Ek1A
+    CciwHdjPd1XWIitjudmQ60BgcZ55HSAtnHUCQEDIKjgqIA0IG1IOiR3IEnO1IZRo
+    wftNr7kkrSvrW7N39AjMk6lfhiGubKcIcLdXzM5WKXDPltSXlh5xZJd+h5UCQQCt
+    HYY8lE4IPf6gb6kOZSFdR3Zg2kTiL3IgV+BOZ4UPYBfFEDzOSHoGBFgl+9Luw7Xg
+    Ynfv2TiUdYQIRv183cbdAkAH0r+Ol4GqohSv64y4RfB33K9rVczlhRmsH4czcoug
+    NRxKbYMgyRBFzlVn4WLHq+3UPTKyPIWNmJ7BDvYEix4+
+    -----END RSA PRIVATE KEY-----
+  rsa_public_key.pem: |-
+    -----BEGIN PUBLIC KEY-----
+    MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnXYubhqfjt/I1p34g62+gpjNf
+    FsPW3yP1ClzbC2xeZQ3W6/56jvOo5CcS6t+P/hondOGUKq4hJDBkzC2M8VtuTXN8
+    iPXG76my5lMWFwPXU3x5HOZrrsP0YogYuaI48wG0nwlRB5T44T39xrWJ3cSPwaoF
+    IeqxczdoP4Wm3e+PUQIDAQAB
+    -----END PUBLIC KEY-----
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,12 +51,20 @@ spec:
         version: v1
     spec:
       containers:
-      - name: jwt
-        image: ccr.ccs.tencentyun.com/ernstliang/jwt-demo:v0.0.4
-        ports:
-        - containerPort: 8080
+        - name: jwt
+          image: ccr.ccs.tencentyun.com/ernstliang/jwt-demo:v0.0.4
+          ports:
+            - containerPort: 8080
+          volumeMount:
+            - mountPath: /data/secret
+              name: secret
+              readOnly: true
       imagePullSecrets:
-      - name: hub-secret
+        - name: hub-secret
+      volumes:
+        - configMap:
+            name: jwt-secret
+          name: secret
 ---
 apiVersion: v1
 kind: Service
